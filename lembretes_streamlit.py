@@ -52,3 +52,30 @@ def monitorar_lembretes():
         for lembrete in lembretes:
             if lembrete["data_hora"] == agora and lembrete["data_hora"] not in enviados:
                 msg = f"📌 {lembrete['titulo']}\n🕒 {lembrete['data_hora']}\n💬 {lembrete['mensagem']}"
+
+# Rodar thread de monitoramento apenas uma vez
+if 'monitorando' not in st.session_state:
+    st.session_state.monitorando = True
+    threading.Thread(target=monitorar_lembretes, daemon=True).start()
+
+# --- Interface do App ---
+st.title("📱 Lembretes com WhatsApp via CallMeBot")
+
+with st.form("form_lembrete"):
+    titulo = st.text_input("Título do lembrete")
+    mensagem = st.text_input("Mensagem")
+    data = st.date_input("Data")
+    hora = st.time_input("Hora")
+
+    if st.form_submit_button("Adicionar lembrete"):
+        data_hora = f"{data} {hora.strftime('%H:%M')}"
+        salvar_lembrete(titulo, mensagem, data_hora)
+        st.success("✅ Lembrete adicionado!")
+
+st.subheader("📋 Lembretes agendados")
+lembretes = carregar_lembretes()
+if lembretes:
+    for l in lembretes:
+        st.markdown(f"- **{l['data_hora']}** — {l['mensagem']}")
+else:
+    st.info("Nenhum lembrete cadastrado ainda.")
