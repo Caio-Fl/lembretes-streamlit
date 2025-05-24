@@ -4,6 +4,8 @@ from datetime import datetime
 import time
 import threading
 import requests
+from dotenv import load_dotenv
+#load_dotenv(".env")
 import os
 
 ARQUIVO_JSON = 'lembretes.json'
@@ -45,13 +47,23 @@ def enviar_mensagem_whatsapp(mensagem):
 
 # Monitorar lembretes e enviar via WhatsApp
 def monitorar_lembretes():
-    enviados = set()
+    enviados = set()  # controla lembretes já enviados para não repetir
     while True:
         lembretes = carregar_lembretes()
         agora = datetime.now().strftime("%Y-%m-%d %H:%M")
+
         for lembrete in lembretes:
-            if lembrete["data_hora"] == agora and lembrete["data_hora"] not in enviados:
+            # Se o horário do lembrete é igual ao atual e ainda não foi enviado
+            if lembrete["data_hora"] == agora and lembrete["data_hora"] + lembrete["titulo"] not in enviados:
                 msg = f"📌 {lembrete['titulo']}\n🕒 {lembrete['data_hora']}\n💬 {lembrete['mensagem']}"
+                sucesso = enviar_mensagem_whatsapp(msg)
+                if sucesso:
+                    enviados.add(lembrete["data_hora"] + lembrete["titulo"])
+                    print(f"Lembrete enviado: {msg}")
+                else:
+                    print("Falha ao enviar lembrete")
+
+        time.sleep(10)  # verifica a cada 30 segundos
 
 # Rodar thread de monitoramento apenas uma vez
 if 'monitorando' not in st.session_state:
@@ -59,7 +71,7 @@ if 'monitorando' not in st.session_state:
     threading.Thread(target=monitorar_lembretes, daemon=True).start()
 
 # --- Interface do App ---
-st.title("📱 Lembretes com WhatsApp via CallMeBot")
+st.title("📱 Lembretes via CallMeBot")
 
 with st.form("form_lembrete"):
     titulo = st.text_input("Título do lembrete")
