@@ -13,7 +13,7 @@ ARQUIVO_JSON = 'lembretes.json'
 # Configuração do CallMeBot
 NUMERO = os.getenv("NUMERO")
 APIKEY = os.getenv("APIKEY")       # <-- Altere aqui!
-GRUPO = os.getenv("GRUPO") 
+#GRUPO = os.getenv("GRUPO") 
 # Salvar lembrete no arquivo
 def salvar_lembrete(titulo, mensagem, data_hora):
     lembrete = {"titulo": titulo, "mensagem": mensagem, "data_hora": data_hora}
