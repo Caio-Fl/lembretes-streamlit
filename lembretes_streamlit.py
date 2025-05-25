@@ -8,6 +8,9 @@ from dotenv import load_dotenv
 load_dotenv()
 import os
 import io
+import pytz
+
+agora = datetime.now(pytz.timezone("America/Sao_Paulo")).strftime("%Y-%m-%d %H:%M")
 ARQUIVO_JSON = 'lembretes.json'
 
 # Configuração do CallMeBot
@@ -78,7 +81,7 @@ def monitorar_lembretes():
     enviados = set()  # controla lembretes já enviados para não repetir
     while True:
         lembretes = carregar_lembretes()
-        agora = datetime.now().strftime("%Y-%m-%d %H:%M")
+        agora = datetime.now(pytz.timezone("America/Sao_Paulo")).strftime("%Y-%m-%d %H:%M") # datetime.now().strftime("%Y-%m-%d %H:%M")
 
         for lembrete in lembretes:
             # Se o horário do lembrete é igual ao atual e ainda não foi enviado
