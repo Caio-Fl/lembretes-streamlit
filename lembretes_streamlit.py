@@ -5,7 +5,7 @@ import time
 import threading
 import requests
 from dotenv import load_dotenv
-#load_dotenv(".env")
+load_dotenv()
 import os
 import io
 ARQUIVO_JSON = 'lembretes.json'
@@ -52,6 +52,7 @@ def substituir_lembretes_novo_arquivo(novo_conteudo):
 # Enviar mensagem via CallMeBot
 def enviar_mensagem_whatsapp(mensagem):
     url = f"https://api.callmebot.com/whatsapp.php?phone={NUMERO}&text={mensagem}&apikey={APIKEY}"
+    print(url)
     try:
         response = requests.get(url)
         return response.status_code == 200
